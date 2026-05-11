@@ -53,22 +53,28 @@ app.get('/cards', async (req, res) => {
         const total = countResult[0].total;
         const totalPages = Math.ceil(total / limit);
 
+        const userId = parseInt(req.query.usuario_id) || 0;
+
         // Query to get paginated cards
         const [cards] = await pool.query(`
             SELECT 
+                a.id AS idCard,
                 u.nome AS autor,
                 u.foto_perfil,
                 p.nome_praia,
                 p.regiao,
                 a.status_balneabilidade,
                 DATE_FORMAT(a.data_coleta, '%d/%m/%Y') AS data_coleta_formatada,
-                DATE_FORMAT(a.data_postagem, '%H:%i - %d/%m/%Y') AS postagem_formatada
+                DATE_FORMAT(a.data_postagem, '%H:%i - %d/%m/%Y') AS postagem_formatada,
+                (SELECT COUNT(*) FROM curtidas WHERE acao_id = a.id) AS total_curtidas,
+                (SELECT COUNT(*) FROM comentarios WHERE acao_id = a.id) AS total_comentarios,
+                (SELECT COUNT(*) FROM curtidas WHERE acao_id = a.id AND usuario_id = ?) AS ja_curtido
             FROM acoes a
             JOIN usuarios u ON a.usuario_id = u.id
             JOIN praias p ON a.praia_id = p.id
             ORDER BY a.data_postagem DESC
             LIMIT ? OFFSET ?;
-        `, [limit, offset]);
+        `, [userId, limit, offset]);
 
         res.json({
             cards,
@@ -127,6 +133,36 @@ app.post('/cards', async (req, res) =>{
     }
 })
 
+
+//curtidas
+app.post('/curtidas', async (req, res) => {
+    const {usuario_id, acao_id} = req.body;
+    console.log('Recebido /curtidas:', {usuario_id, acao_id});
+
+    try {
+        const [curtidas] = await pool.query(
+            'SELECT id FROM curtidas WHERE usuario_id = ? AND acao_id = ?',
+            [usuario_id, acao_id]
+        );
+
+        if (curtidas.length > 0){
+            await pool.query(
+                'DELETE FROM curtidas WHERE usuario_id = ? AND acao_id = ?',
+                [usuario_id, acao_id]
+            );
+            res.json({ success: true, message: "Descurtida"})
+        } else {
+            await pool.query(
+                'INSERT INTO curtidas (usuario_id, acao_id) VALUES (?,?)',
+                [usuario_id, acao_id]
+            );
+            res.json({ success: true, message: "Curtida"})
+        }
+    } catch (error) {
+        console.error('Erro ao curtir:', error);
+        res.status(500).json({ success: false, message: "Erro ao curtir"});
+    }
+})
 
 //servidor rodando
 app.listen(port, () => {

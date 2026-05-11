@@ -137,6 +137,11 @@ main nav ul a{
     width: 15px;
     height: 15px;
     font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.btn-like.liked img {
+    transform: scale(1.2);
 }
 
 .btn-comentar{

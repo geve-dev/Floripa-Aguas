@@ -35,6 +35,40 @@ btnAbrirRegistro.addEventListener('click', () => {
     }
 });
 
+async function post_curtidas(idCard) {
+    if (!get_status()) {
+        alert('Você precisa estar logado para curtir!');
+        return;
+    }
+
+    const usuario_id = localStorage.getItem('codigousuario');
+
+    try {
+        const res = await fetch('http://localhost:3000/curtidas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: usuario_id,
+                acao_id: idCard
+            })
+        });
+
+        const resultado = await res.json();
+        if (resultado.success) {
+            // Atualiza os cards para mostrar a mudança
+            get_cards(currentPage);
+            console.log(resultado.message);
+        }
+    } catch (error) {
+        console.error('Erro ao processar curtida:', error);
+    }
+
+
+}
+
+
+    
+
 async function post_cards(){
     const form = document.getElementById('fc');
     const dados = new FormData(form);
@@ -129,7 +163,8 @@ async function render_perfil() {
 }
 
 async function get_cards(page = 1) {
-    const res = await fetch(`http://localhost:3000/cards?page=${page}&limit=4`);
+    const usuario_id = localStorage.getItem('codigousuario') || 0;
+    const res = await fetch(`http://localhost:3000/cards?page=${page}&limit=4&usuario_id=${usuario_id}`);
 
     let response = await res.json();
     console.log(response);
@@ -170,6 +205,11 @@ async function render_cards(dados) {
     let conteudoHTML = '';
 
     for (let i = 0; i < dados.length; i++) {
+
+        const idCard = dados[i].idCard;
+        const totalCurtidas = dados[i].total_curtidas;
+        const jaCurtido = dados[i].ja_curtido > 0 ? 'liked' : '';
+
         conteudoHTML += `
         <div class="card">
                 <header>
@@ -196,8 +236,10 @@ async function render_cards(dados) {
                                 <p>Região</p>
                              </div>
                              <div class="card-interacoes">
-                                <button class="btn-like"><img src="assets/images/icones/coracao.svg" alt=""> 1</button>
-                                <button class="btn-comentar">💬 1</button>
+                                <button class="btn-like ${jaCurtido}" onclick="post_curtidas(${idCard})">
+                                    <img src="assets/images/icones/${jaCurtido ? 'CoracaoVermelho.svg' : 'coracao.svg'}" alt=""> ${totalCurtidas}
+                                </button>
+                                <button class="btn-comentar">💬 ${dados[i].total_comentarios}</button>
                             </div>
                          </div>
                     </div>
