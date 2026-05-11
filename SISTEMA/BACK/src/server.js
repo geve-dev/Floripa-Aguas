@@ -46,17 +46,26 @@ app.get('/cards', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 4;
     const offset = (page - 1) * limit;
+    const regiao = req.query.regiao;
 
     try {
+        let countQuery = 'SELECT COUNT(*) as total FROM acoes a';
+        let queryParams = [];
+        
+        if (regiao) {
+            countQuery += ' JOIN praias p ON a.praia_id = p.id WHERE p.regiao = ?';
+            queryParams.push(regiao);
+        }
+
         // Query to get total count
-        const [countResult] = await pool.query('SELECT COUNT(*) as total FROM acoes');
+        const [countResult] = await pool.query(countQuery, queryParams);
         const total = countResult[0].total;
         const totalPages = Math.ceil(total / limit);
 
         const userId = parseInt(req.query.usuario_id) || 0;
 
-        // Query to get paginated cards
-        const [cards] = await pool.query(`
+        // Base query to get cards
+        let cardsQuery = `
             SELECT 
                 a.id AS idCard,
                 u.nome AS autor,
@@ -72,9 +81,19 @@ app.get('/cards', async (req, res) => {
             FROM acoes a
             JOIN usuarios u ON a.usuario_id = u.id
             JOIN praias p ON a.praia_id = p.id
-            ORDER BY a.data_postagem DESC
-            LIMIT ? OFFSET ?;
-        `, [userId, limit, offset]);
+        `;
+
+        let cardsParams = [userId];
+
+        if (regiao) {
+            cardsQuery += ' WHERE p.regiao = ?';
+            cardsParams.push(regiao);
+        }
+
+        cardsQuery += ' ORDER BY a.data_postagem DESC LIMIT ? OFFSET ?';
+        cardsParams.push(limit, offset);
+
+        const [cards] = await pool.query(cardsQuery, cardsParams);
 
         res.json({
             cards,

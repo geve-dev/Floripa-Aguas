@@ -6,6 +6,7 @@ const registerOverlay = document.getElementById('registerOverlay');
 
 render_perfil()
 let currentPage = 1;
+let currentRegion = '';
 get_cards(currentPage)
 
 btnFechar.addEventListener('click', () => {
@@ -164,13 +165,25 @@ async function render_perfil() {
 
 async function get_cards(page = 1) {
     const usuario_id = localStorage.getItem('codigousuario') || 0;
-    const res = await fetch(`http://localhost:3000/cards?page=${page}&limit=4&usuario_id=${usuario_id}`);
+    let url = `http://localhost:3000/cards?page=${page}&limit=4&usuario_id=${usuario_id}`;
+    
+    if (currentRegion) {
+        url += `&regiao=${currentRegion}`;
+    }
+
+    const res = await fetch(url);
 
     let response = await res.json();
     console.log(response);
 
     render_cards(response.cards);
     render_pagination(response.pagination);
+};
+
+window.filterByRegion = function(region) {
+    currentRegion = region;
+    currentPage = 1;
+    get_cards(currentPage);
 };
 
 function render_pagination(pagination) {
