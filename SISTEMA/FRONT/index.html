@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floripa Águas</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+    <aside>
+        <header>
+            <img src="assets\images\logo.jpg" alt="Logo Floripa Águas">
+            <h1 id="userName">Floripa Águas</h1>
+            <p id="totalAnalises">309</p>
+            <span>Análises já realizadas</span>
+        </header>
+        <main>
+            <p id="btnAbrirRegistro">REGISTRAR</p>
+        </main>
+        <footer>
+            <h2>Floripa Águas</h2>
+            <div class="redes-socias">
+                <img src="assets\images\icones\instagram.svg" alt="">
+                <img src="assets\images\icones\twitter.svg" alt="">
+                <img src="assets\images\icones\tiktok.svg" alt="">
+            </div>
+             <p>Copyright - 04/05/2026</p>
+        </footer>
+    </aside>
+
+    <main>
+        <header>
+            <button id="btnAbrir">Login</button>
+        </header>
+        <nav>
+            <ul>
+                <a href="">Norte</a>
+                <a href="">Sul</a>
+                <a href="">Leste</a>
+                <a href="">Oeste</a>
+            </ul>
+        </nav>
+
+    
+        
+        <div id="registerOverlay" class="overlay2">
+            <div class="registerCard">
+                <div class="registerCard-header">
+                    <p>Registre a Situação da Praia</p>
+                </div> 
+                
+                <div class="registerCard-main">
+                    <form id="fc">
+                        <label for="nomePraia">Nome da Praia</label>
+                        <input type="text" id="nomePraia" name="nomePraia">
+    
+                        <label for="dataColeta">Data da Coleta</label>
+                        <input type="date" id="dataColeta" name="dataColeta">
+    
+                         <label for="statusBalneabilidade">Situação da praia</label>
+                        <select id="statusBalneabilidade" name="statusBalneabilidade">
+                            <option value="Própria">Própria</option>
+                            <option value="Imprópria">Imprópria</option>
+                        </select>
+    
+                         <label for="regiao">Região</label>
+                        <select id="regiao" name="regiao">
+                            <option value="Norte">Norte</option>
+                            <option value="Sul">Sul</option>
+                            <option value="Leste">Leste</option>
+                            <option value="Oeste">Oeste</option>
+                        </select>
+                    </form>
+    
+                    <div class="btns">
+                        <button id="btnRegistrarCard" onclick="post_cards()">Registrar</button>
+                        <button id="btnCancelar">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <main class="cards">
+            <div class="card">
+                <header>
+                    <span class="nomePraia">Praia de Jurerê</span>
+                    <span class="data">09:15 - 05/10/24</span>
+                </header>
+
+                <main class="card-corpo">
+                    <img src="" alt="" class="avatar">
+
+                    <div class="card-conteudo">
+                         <h3 class="username">Usuário_03</h3>
+
+                         <div class="infos">
+                             <div class="itens-info">
+                                <span>15/06/2025</span>
+                                <p>Data da coleta</p>
+                             </div>
+                             <div class="itens-info">
+                                <span>Própria</span>
+                                <p>Situação da praia</p>
+                             </div>
+                             <div class="itens-info">
+                                <span>Norte</span>
+                                <p>Região</p>
+                             </div>
+                             <div class="card-interacoes">
+                                <button class="btn-like"><img src="assets/images/icones/coracao.svg" alt=""> 1</button>
+                                <button class="btn-comentar">💬 1</button>
+                            </div>
+                         </div>
+                    </div>
+                </main>
+            </div>
+        </main>
+
+        <div id="pagination" class="pagination"></div>
+
+    </main>
+
+    <div id="popupOverlay" class="overlay">
+        <div class="login">
+            <header>
+                <h4>Login</h4>
+                <img id="btnFechar" src="assets/images/icones/x.svg" alt="">
+            </header>
+            <main>
+                <form id="fl">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha">
+                </form>
+
+                <div class="btns">
+                    <button id="btnLogin" onclick="post_login()">Login</button>
+                    <button>Cancelar</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+
+
+    <script src="src/js/scripts.js"></script>
+</body>
+</html>
