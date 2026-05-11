@@ -133,7 +133,7 @@ main nav ul a{
     cursor: pointer;
 }
 
-.btn-like img{
+.btn-like img, .btn-comentar img{
     width: 15px;
     height: 15px;
     font-size: 1.2rem;
@@ -144,9 +144,9 @@ main nav ul a{
     transform: scale(1.2);
 }
 
-.btn-comentar{
+/* .btn-comentar{
   margin-top: -3px;
-}
+} */
 
 .btn-comentar,
 .btn-like{
@@ -191,4 +191,45 @@ main nav ul a{
     cursor: not-allowed;
     border-color: #444;
     color: #444;
+}
+
+/* Estilos de Comentários */
+.card-footer-comentario {
+    background-color: #333;
+    padding: 8px 15px;
+    margin: 5px -10px -5px -10px;
+}
+
+.comentarios-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comentarios-input-container input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.comentarios-input-container button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: transform 0.1s ease;
+}
+
+.comentarios-input-container button:active {
+    transform: scale(0.9);
+}
+
+.comentarios-input-container button img {
+    width: 30px;
+    height: 30px;
 }

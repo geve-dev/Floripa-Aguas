@@ -67,6 +67,60 @@ async function post_curtidas(idCard) {
 
 }
 
+async function post_comentario(idCard) {
+    if (!get_status()) {
+        alert('Você precisa estar logado para comentar!');
+        return;
+    }
+
+    const input = document.getElementById(`input-comentario-${idCard}`);
+    const texto = input.value.trim();
+
+    if (!texto) {
+        alert('O comentário não pode estar vazio!');
+        return;
+    }
+
+    const usuario_id = localStorage.getItem('codigousuario');
+
+    try {
+        const res = await fetch('http://localhost:3000/comentarios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: usuario_id,
+                acao_id: idCard,
+                texto_comentario: texto
+            })
+        });
+
+        const resultado = await res.json();
+        if (resultado.success) {
+            input.value = '';
+            get_cards(currentPage);
+            console.log(resultado.message);
+        }
+    } catch (error) {
+        console.error('Erro ao processar comentário:', error);
+    }
+}
+
+function toggleComentarios(idCard) {
+    const footers = document.querySelectorAll('.card-footer-comentario');
+    const targetFooter = document.getElementById(`footer-comentario-${idCard}`);
+    const isAlreadyOpen = targetFooter.style.display === 'block';
+
+    // Fecha todos os outros
+    footers.forEach(f => f.style.display = 'none');
+
+    // Abre o alvo se ele não estava aberto
+    if (!isAlreadyOpen) {
+        targetFooter.style.display = 'block';
+    }
+}
+
+
+
 
     
 
@@ -252,11 +306,19 @@ async function render_cards(dados) {
                                 <button class="btn-like ${jaCurtido}" onclick="post_curtidas(${idCard})">
                                     <img src="assets/images/icones/${jaCurtido ? 'CoracaoVermelho.svg' : 'coracao.svg'}" alt=""> ${totalCurtidas}
                                 </button>
-                                <button class="btn-comentar">💬 ${dados[i].total_comentarios}</button>
+                                <button class="btn-comentar" onclick="toggleComentarios(${idCard})"><img src="assets/images/icones/comentario.svg" alt=""> ${dados[i].total_comentarios}</button>
                             </div>
                          </div>
                     </div>
                 </main>
+                <footer class="card-footer-comentario" id="footer-comentario-${idCard}" style="display: none;">
+                    <div class="comentarios-input-container">
+                        <input type="text" placeholder="Escrever comentário..." id="input-comentario-${idCard}">
+                        <button onclick="post_comentario(${idCard})">
+                            <img src="assets/images/icones/send.svg" alt="Enviar">
+                        </button>
+                    </div>
+                </footer>
             </div>
         `;
     }

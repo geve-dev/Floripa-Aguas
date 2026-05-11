@@ -183,6 +183,22 @@ app.post('/curtidas', async (req, res) => {
     }
 })
 
+//comentarios
+app.post('/comentarios', async (req, res) => {
+    const { usuario_id, acao_id, texto_comentario } = req.body;
+
+    try {
+        await pool.query(
+            'INSERT INTO comentarios (usuario_id, acao_id, texto_comentario) VALUES (?, ?, ?)',
+            [usuario_id, acao_id, texto_comentario]
+        );
+        res.json({ success: true, message: "Comentário enviado com sucesso" });
+    } catch (error) {
+        console.error('Erro ao enviar comentário:', error);
+        res.status(500).json({ success: false, message: "Erro ao enviar comentário" });
+    }
+});
+
 //servidor rodando
 app.listen(port, () => {
     console.log(`API rodando em http://localhost:${port}`);
